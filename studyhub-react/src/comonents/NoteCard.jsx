@@ -1,10 +1,11 @@
 
-function NoteCard({title, course, likes}) {
+function NoteCard({note, onLike}) {
   return (
     <article className="note-card">
-      <h2>{title}</h2>
-      <p>{course}</p>
-      <p>♥ {likes} likes</p>
+      <h2>{note.title}</h2>
+      <p>{note.course}</p>
+      <p>♥ {note.likes} likes</p>
+      <button onClick={() => onLike(note.id)}>Like</button>
     </article>
   )
 }

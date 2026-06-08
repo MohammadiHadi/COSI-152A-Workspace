@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required: character encoding -->
+  <meta charset="UTF-8" />
+
+  <!-- Required: mobile scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Appears in browser tab -->
+  <title>StudyHub — Share Notes, Ace Exams</title>
+
+</head>
+
+<!-- body content on next slide -->
+<body>
+
+  <header>
+    <h1>StudyHub</h1>
+    <nav>
+      <a href="/" class="logo">StudyHub</a>
+      <a href="/notes">Browse Notes</a>
+      <a href="/notes/new">Post a Note</a>
+      <a href="/login">Log In</a>
+
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Share Notes. Ace Exams.</h1>
+      <p>Browse study notes shared by Brandeis students.</p>
+    </section>
+    <button id="show-post-form" type="button">Post a Note</button>
+
+<section id="notes-section">
+    <label for="search">Search notes</label>
+    <input id="search" type="search" placeholder="Search by title or course">
+    
+    <p id="search-status" aria-live="polite"></p>
+    <section class="note-grid">
+
+      <!-- NoteCard components will go here -->
+    </section>
+</section>
+
+<section id="post-form-section" style="display:none">
+  <h2>Post a Note</h2>
+  <form id="post-note-form">
+    <label for="note-title">Title *</label>
+    <input id="note-title" name="title" type="text"
+      required placeholder="e.g. React Hooks Cheatsheet">
+
+    <label for="note-course">Course *</label>
+    <input id="note-course" name="course" type="text"
+      required placeholder="e.g. COSI 166B">
+
+    <label for="note-content">Content</label>
+    <textarea id="note-content" name="content" rows="4"
+      placeholder="Share your notes..."></textarea>
+
+    <button type="submit">Post Note</button>
+  </form>
+</section>
+
+  </main>
+
+ <footer >
+    <p>&copy; 2026 StudyHub &middot; Brandeis University</p>
+  </footer>
+</body>
+<script type="module" src="/src/main.js"></script>
+

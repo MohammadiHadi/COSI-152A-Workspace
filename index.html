@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required: character encoding -->
+  <meta charset="UTF-8" />
+
+  <!-- Required: mobile scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Appears in browser tab -->
+  <title>StudyHub — Share Notes, Ace Exams</title>
+
+  <!-- External CSS file -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<!-- body content on next slide -->
+<body>
+
+  <header>
+    <h1>StudyHub</h1>
+    <nav>
+      <a href="/" class="logo">StudyHub</a>
+      <a href="/notes">Browse Notes</a>
+      <a href="/notes/new">Post a Note</a>
+      <a href="/login">Log In</a>
+
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Share Notes. Ace Exams.</h1>
+      <p>Browse study notes shared by Brandeis students.</p>
+    </section>
+
+    <label for="search">Search notes</label>
+    <input id="search" type="search" placeholder="Search by title or course">
+    
+    <p id="search-status" aria-live="polite"></p>
+    <section class="note-grid">
+
+      <!-- NoteCard components will go here -->
+    </section>
+  </main>
+
+ <footer >
+    <p>&copy; 2026 StudyHub &middot; Brandeis University</p>
+  </footer>
+  <script src="script.js"></script>
+
+</body>

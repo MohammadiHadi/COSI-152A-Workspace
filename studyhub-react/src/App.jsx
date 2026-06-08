@@ -1,17 +1,19 @@
 import './App.css'
 import NoteList from './comonents/NoteList'
 import Header from './comonents/Header'
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
 
 const INITIAL_NOTES = [
-  { id: 1, title: 'React Basics', course: 'COSI 152A', likes: 14 },
-  { id: 2, title: 'DOM Review', course: 'COSI 152A', likes: 8 },
-  { id: 3, title: 'JavaScript Arrays', course: 'COSI 152A', likes: 21 },
+  { id: 1, title: 'React Basics', course: 'COSI 152A', likes: 14, tags: ['react', 'jsx'] },
+  { id: 2, title: 'DOM Review', course: 'COSI 152A', likes: 8 , tags: ['dom', 'javascript']},
+  { id: 3, title: 'JavaScript Arrays', course: 'COSI 152A', likes: 21, tags: ['javascript', 'arrays'] },
 ]
 
 
 function App() {
   const [notes, setNotes] = useState(INITIAL_NOTES)
+  const [loading, setLoading] = useState(true)
+  const [activeTag, setActiveTag] = useState(null)
 
   function handleLike(id) {
     setNotes(prev =>
@@ -23,6 +25,12 @@ function App() {
     )
   }
 
+  function handleTag(tag){
+    setActiveTag(activeTag === tag ? null : tag)
+  }
+
+  const filteredNotes = activeTag ? notes.filter(n=> n.tags.includes(activeTag)) : notes
+
   function handleClick(){
     if(notes.length === 0){
       setNotes(INITIAL_NOTES)
@@ -31,13 +39,25 @@ function App() {
     }
   }
 
+  useEffect(()=>{
+    console.log("Notes are chnaged")
+  }, [])
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      setLoading(false)
+    }, 2000)
+  }, [])
+
+  if (loading) 
+    return <p>Loading.....</p>
   return (
     <div className='app'>
       <Header />
       <main>
         <h2>Study Notes</h2>
         <button onClick={handleClick}>Hide/Show Notes</button>
-        <NoteList notes = {notes} onLike={handleLike} />
+        <NoteList notes = {filteredNotes} onLike={handleLike} activeTag={activeTag} onTagClick={handleTag} />
       </main>
     </div>
   )

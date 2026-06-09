@@ -1,6 +1,7 @@
 import './App.css'
 import NoteList from './comonents/NoteList'
 import Header from './comonents/Header'
+import NoteForm from './comonents/NoteForm'
 import { useState , useEffect } from 'react'
 
 const INITIAL_NOTES = [
@@ -49,6 +50,16 @@ function App() {
     }, 2000)
   }, [])
 
+  function addNote(noteData){
+    const newNote = {
+      id: Date.now(),
+      ...noteData,
+      likes : 0,
+      tags : []
+    };
+    setNotes(prev => [newNote, ...prev])
+  }
+
   if (loading) 
     return <p>Loading.....</p>
   return (
@@ -56,6 +67,7 @@ function App() {
       <Header />
       <main>
         <h2>Study Notes</h2>
+        <NoteForm addNote={addNote}/>
         <button onClick={handleClick}>Hide/Show Notes</button>
         <NoteList notes = {filteredNotes} onLike={handleLike} activeTag={activeTag} onTagClick={handleTag} />
       </main>

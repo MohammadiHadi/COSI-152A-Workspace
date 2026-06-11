@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 function validate(title, course){
     const errors = {}
@@ -22,6 +23,8 @@ function validate(title, course){
 }
 
 export default function NoteForm({addNote}) {
+  const navigate = useNavigate();
+
   // Option A: separate state variables
   const [title, setTitle] = useState('');
   const [course,  setCourse]  = useState('');
@@ -39,15 +42,17 @@ export default function NoteForm({addNote}) {
     }
 
 
-    addNote({
+    const newId = addNote({
         title: title.trim(),
         course: course.trim()
     })
-
-
+    
     setTitle("")
     setCourse("")
     setErrors({})
+
+    navigate(`/notes/${newId}`);
+
   }
 
   return (

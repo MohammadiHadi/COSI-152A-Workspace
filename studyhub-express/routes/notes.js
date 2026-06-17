@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {
 getNotes,
-createNote
+createNote,
 } = require('../controllers/notesController');
+const {createNoteRules, noteIdRules} = require("../validators/notesValidtors")
+const {validate} = require("../middleware/validate")
 
 function logger(req,res, next){
     console.log(req.method + ' ' + req.url);  // logger
@@ -12,5 +14,5 @@ function logger(req,res, next){
 
 router.get('/',logger,  getNotes);
 
-router.post('/', createNote);
+router.post('/', createNoteRules, validate, createNote);
 module.exports = router;

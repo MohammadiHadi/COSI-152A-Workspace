@@ -23,12 +23,14 @@ let notes = [
 ];
 
 let result = notes;
-
+let nextId = 21;
 const createNote = (req, res, next) => {
-  const { title, content, course } = req.body; // JSON body
+  const { title, content, course, tags } = req.body; // JSON body
 
+  const note = {id: nextId++, title, content, course, tags: tags || [], likes:0, createdAt: new Date(),};
+  notes.push(note)
   // res — building the response
-  res.status(201).json({ data: { id: Date.now(), title, content } });
+  res.status(201).json({ data: note });
 }
 
 // const getNotes = (req, res) => {
@@ -57,10 +59,53 @@ const getNotes = (req, res) => {
   });
 };
 
+const updateNote = (req, res , next) => {
+  const id = Number(req.params.id);
+
+  const index = notes.findIndex((note)=> note.id === id);
+
+  if(index === -1){
+    const error = new Error("Note not found")
+    error.status = 404
+    return next(error)
+  }
+
+  const allowedFields = ['title', 'content', 'course', 'tags'];
+
+  allowedFields.forEach((field)=>{
+    if(req.body[field] !== undefined){
+      notes[index][field] = req.body[field]
+    }
+  })
+
+  res.json({data: notes[index]})
+
+}
+
+
+const deleteNote = (req, res , next) => {
+  const id = Number(req.params.id);
+
+  const index = notes.findIndex((note)=> note.id === id);
+
+  if(index === -1){
+    const error = new Error("Note not found")
+    error.status = 404
+    return next(error)
+  }
+
+  notes.splice(index, 1)
+
+  res.status(204).send()
+
+}
+
 
 module.exports = {
 getNotes,
 createNote,
+updateNote,
+deleteNote,
 }
 
 

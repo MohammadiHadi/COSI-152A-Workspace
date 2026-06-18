@@ -1,0 +1,57 @@
+@baseUrl=http://localhost:3000/api
+
+### Get all notes
+GET {{baseUrl}}/notes
+
+### Create a note
+POST {{baseUrl}}/notes
+Content-Type: application/json
+
+{
+    "title": "Testing API using REST Client",
+    "content": "REST Client is a VS code extension that helps us manually test an API",
+    "course": "152A"
+}
+
+### Create a note with empty/space-only course content
+POST {{baseUrl}}/notes
+Content-Type: application/json
+
+{
+    "title": "Testing API using REST Client",
+    "content": "REST Client is a VS code extension that helps us manually test an API",
+    "course": "    "
+}
+
+### Create a note with beyond max length title
+POST {{baseUrl}}/notes
+Content-Type: application/json
+
+{
+    "title": "Testing API using REST Client",
+    "content": "REST Client is a VS code extension that helps us manually test an API",
+    "course": "152A"
+}
+
+
+### Update a note
+PATCH {{baseUrl}}/notes/3
+Content-Type: application/json
+
+{
+    "title": "This title is updated"
+}
+
+### Update a note
+PUT {{baseUrl}}/notes/3
+Content-Type: application/json
+
+{
+    "title": "This title is updated"
+}
+
+
+### Delete a note
+DELETE {{baseUrl}}/notes/3
+
+

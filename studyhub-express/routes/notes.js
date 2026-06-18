@@ -3,16 +3,17 @@ const router = express.Router();
 const {
 getNotes,
 createNote,
+updateNote,
+deleteNote,
 } = require('../controllers/notesController');
-const {createNoteRules, noteIdRules} = require("../validators/notesValidtors")
+
+const {createNoteRules, noteIdRules, updateNoteRules} = require("../validators/notesValidtors")
 const {validate} = require("../middleware/validate")
 
-function logger(req,res, next){
-    console.log(req.method + ' ' + req.url);  // logger
-    next()
-}
-
-router.get('/',logger,  getNotes);
+router.get('/',  getNotes);
 
 router.post('/', createNoteRules, validate, createNote);
+router.patch('/:id', noteIdRules, updateNoteRules, validate, updateNote)
+router.delete('/:id', noteIdRules, validate, deleteNote)
+
 module.exports = router;

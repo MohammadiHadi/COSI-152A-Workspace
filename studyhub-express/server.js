@@ -12,15 +12,18 @@ app.use(express.json())
 app.use('/api/notes', notesRouter);
 
 app.use((err, req, res, next) => {
-  console.error(err.message);
+  const status = err.status || 500;
 
-  res.status(err.status || 500).json({
+  console.error(err);
+
+  res.status(status).json({
     error: {
-      message: err.message || 'Something went wrong',
-      details: err.details || undefined
+      message: status < 500 ? err.message : 'Internal server error',
+      details: status < 500 ? err.details : undefined
     }
   });
 });
+
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on http://localhost:${PORT}`)

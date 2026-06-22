@@ -15,7 +15,7 @@ const createNoteRules = [
 ];
 
 const noteIdRules = [
-    param('id').isInt({ min : 1}).withMessage('Note ID must be a positive integer'),
+    param('id').notEmpty().withMessage('Note ID is required').isLength({min: 10}).withMessage("ID must be at least 10 characters"),
 ];
 
 

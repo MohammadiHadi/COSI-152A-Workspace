@@ -3,6 +3,10 @@
 ### Get all notes
 GET {{baseUrl}}/notes
 
+### Get one note
+GET {{baseUrl}}/notes/6a398e394159158589ea2195
+
+
 ### Create a note
 POST {{baseUrl}}/notes
 Content-Type: application/json
@@ -35,7 +39,7 @@ Content-Type: application/json
 
 
 ### Update a note
-PATCH {{baseUrl}}/notes/3
+PATCH {{baseUrl}}/notes/6a398f81756b88a117e1823c
 Content-Type: application/json
 
 {
@@ -52,6 +56,6 @@ Content-Type: application/json
 
 
 ### Delete a note
-DELETE {{baseUrl}}/notes/3
+DELETE {{baseUrl}}/notes/6a398e394159158589ea2196
 
 

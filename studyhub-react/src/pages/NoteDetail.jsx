@@ -1,19 +1,21 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getNote } from "../services/notesService";
 
 export default function NoteDetail({ notes }) {
   const { id } = useParams();
+  const [note, setNote]     = useState(null);
+  const [status, setStatus] = useState("loading");
 
-  const note = notes.find(note => String(note.id) === id);
+  useEffect(() => {
+    getNote(id)
+      .then(n => { setNote(n); setStatus("ready"); })
+      .catch(() => setStatus("error"));
+  }, [id]);
 
-  if (!note) {
-    return (
-      <>
-        <h2>Note not found</h2>
-        <p>We could not find a note with ID {id}.</p>
-        <Link to="/">Back to notes</Link>
-      </>
-    );
-  }
+  if (status === "loading") return <p>Loading…</p>;
+  if (status === "error")   return <p>Note not found.</p>;
+
 
   return (
     <article className="note-detail">

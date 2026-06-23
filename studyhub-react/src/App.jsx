@@ -1,6 +1,11 @@
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { getNotes } from "./services/notesService";
+import { createNote } from "./services/notesService";
+import { updateNote } from "./services/notesService";
+import { deleteNote } from "./services/notesService";
+
 
 import HomePage from "./pages/HomePage";
 import NewNotePage from "./pages/NewNotePage";
@@ -9,24 +14,25 @@ import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./comonents/Layout";
 
-const INITIAL_NOTES = [
-  { id: 1, title: "React Basics", course: "COSI 152A", likes: 14, tags: ["react", "jsx"] },
-  { id: 2, title: "DOM Review", course: "COSI 152A", likes: 8, tags: ["dom", "javascript"] },
-  { id: 3, title: "JavaScript Arrays", course: "COSI 152A", likes: 21, tags: ["javascript", "arrays"] },
-];
-
 export default function App() {
-  const [notes, setNotes] = useState(INITIAL_NOTES);
+  const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTag, setActiveTag] = useState(null);
+  const [error, setError]     = useState(null);
 
-  function handleLike(id) {
-    setNotes(prev =>
-      prev.map(note =>
-        note.id === id ? { ...note, likes: note.likes + 1 } : note
-      )
-    );
+
+  async function handleLike(id) {
+    const note = notes.find(n => n._id === id);
+    const updated = await updateNote(id, { likes: note.likes + 1 });
+    setNotes(prev => prev.map(n => (n._id === id ? updated : n)));
   }
+
+  async function handleDelete(id) {
+    await deleteNote(id);
+    setNotes(prev => prev.filter(n => n._id !== id));
+  }
+
+
 
   function handleTag(tag) {
     setActiveTag(activeTag === tag ? null : tag);
@@ -45,32 +51,31 @@ export default function App() {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    getNotes()
+      .then(setNotes)
+      .catch(() => setError("Could not load notes"))
+      .finally(() => setLoading(false));
   }, []);
 
-  function addNote(noteData) {
-    const newNote = {
-      id: Date.now(),
-      ...noteData,
-      likes: 0,
-      tags: [],
-    };
-
-    setNotes(prev => [newNote, ...prev]);
-
-    return newNote.id;
+  async function addNote(noteData) {
+    const created = await createNote(noteData);  // saved note (has _id)
+    setNotes(prev => [created, ...prev]);
+    return created._id;                          // for navigation
   }
+
 
   if (loading) {
     return <p>Loading.....</p>;
   }
 
+  if (loading) {
+    return <p>{error}</p>;
+  }
+
   return (
   <Routes>
     <Route path="/" element={<Layout />}>
-      <Route index element={<HomePage notes={notes} onLike={handleLike} />} />
+      <Route index element={<HomePage notes={notes} onLike={handleLike} onDelete={handleDelete}  />} />
       <Route path="notes/new" element={<NewNotePage addNote={addNote} />} />
       <Route path="notes/:id" element={<NoteDetail notes={notes} />} />
       <Route path="about" element={<AboutPage />} />

@@ -5,8 +5,14 @@ export default function HomePage({
   onLike,
   activeTag,
   onTagClick,
-  onToggleNotes
+  onToggleNotes,
+  onDelete,
 }) {
+  
+  if (notes.length === 0) {
+    return <p>No notes yet — create the first one!</p>;
+  }
+
   return (
     <>
       <h2>Study Notes</h2>
@@ -17,6 +23,7 @@ export default function HomePage({
         onLike={onLike}
         activeTag={activeTag}
         onTagClick={onTagClick}
+        onDelete={onDelete}
       />
     </>
   );

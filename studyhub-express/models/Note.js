@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const User = require("../models/User")
 
 const noteSchema = mongoose.Schema(
     {
@@ -11,12 +12,24 @@ const noteSchema = mongoose.Schema(
         isPublic: { type: Boolean, default: true }
     }, 
     {
-        timestamps: true
+        timestamps: true,
+        toJSON: {virtuals: true}
+
     }
 )
 
-// const Note = mongoose.model('Note', noteSchema)
-// module.exports = Note
+noteSchema.methods.getContentSummary = function () {
+  if (!this.content) return "";
+  return this.content.slice(0, 100) + "...";
+};
 
+noteSchema.statics.findByAuthor = function(authorId) 
+{ 
+    return this.find({author: authorId}); 
+}
+
+noteSchema.virtual("tagCount").get(function () {
+  return this.tags ? this.tags.length : 0;
+});
 
 module.exports = mongoose.model('Note', noteSchema)

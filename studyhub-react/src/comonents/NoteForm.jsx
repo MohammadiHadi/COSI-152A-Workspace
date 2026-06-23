@@ -30,7 +30,7 @@ export default function NoteForm({addNote}) {
   const [course,  setCourse]  = useState('');
   const [errors, setErrors] = useState({})
 
-  function handleSubmit(e){
+  async function handleSubmit(e){
     e.preventDefault()
 
     //validate
@@ -42,10 +42,8 @@ export default function NoteForm({addNote}) {
     }
 
 
-    const newId = addNote({
-        title: title.trim(),
-        course: course.trim()
-    })
+     const newId = await addNote({ title: title.trim(), course: course.trim() });
+
     
     setTitle("")
     setCourse("")

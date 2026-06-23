@@ -1,90 +1,105 @@
 const Note = require("../models/Note")
 
-
 const createNote = async(req, res, next) => {
-  const note = await Note.create(
-    {
-      title: req.body.title,
+  try {
+    const note = await Note.create({
+      title: req.body.title, 
       content: req.body.content, 
       course: req.body.course, 
-      tags: req.body.tags || [], 
-      likes: req.body.likes || 0,
-
+      tags: req.body.tags, 
     });
-  res.status(201).json({ data: note });
+    res.status(201).json({ data: note });
+  } catch(err){
+    next(err)
+  }
 }
 
-// const getNotes = (req, res) => {
-// res.json({ data: notes });
-// }
-const getNotes = async(req, res) => {
+const getNotes = async (req, res, next) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
 
-  const {course} = req.query;
+  try {
+    const notes = await Note.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("title course createdAt author")
+      .populate("author", "name email");
 
-  const notes = await Note.find().sort({createdAt: 1}).select("title createdAt");
+    const total = await Note.countDocuments();
 
-  const paginatedNotes = notes.slice((page - 1) * limit , page * limit);
-
-  res.json({
-    data: paginatedNotes,
-    count: paginatedNotes.length,
-    total: notes.length,
-    page: page,
-    limit: limit,
-  });
+    res.json({
+      data: notes,
+      count: notes.length,
+      total,
+      page,
+      limit,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
-
 const getOneNote = async(req, res, next) => {
-  const note = await Note.findById(req.params.id);
+  try {
+    const note = await Note.findById(req.params.id);
+    console.log(note.getContentSummary());
+    console.log(note.tagCount)
 
-  if(!note){
-    const error = new Error('Note not found')
-    error.status = 404
-    return next(error)
+
+    if (!note) {
+      const error = new Error("Note not found")
+      error.status = 404
+      return next(error)
+    }
+
+    res.json({
+      data: note
+    });
+  } catch (err) {
+    next(err);
   }
-
-  res.json({
-    data: note
-  });
 };
 
 const updateNote = async(req, res , next) => {
-  const updatedNote = await Note.findByIdAndUpdate(
-    req.params.id,
-    { $set: req.body },
-    {
-      new: true,
-      runValidators: true
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!updatedNote) {
+      const error = new Error("Note not found")
+      error.status = 404
+      return next(error)
     }
-  );
 
-  if (!updatedNote) {
-    const error = new Error("Note not found")
-    error.status = 404
-    return next(error)
+    res.json({data: updatedNote})
+  } catch (err) {
+    next(err)
   }
-
-  res.json({data: updatedNote})
-
 }
 
 
-
-
 const deleteNote = async(req, res , next) => {
-  const deletedNote = await Note.findByIdAndDelete(req.params.id)
+  try {
+    const deletedNote = await Note.findByIdAndDelete(req.params.id);
 
-  if(!deleteNote){
-    const error = new Error('Note not found')
-    error.status = 404
-    return next(error)
+    if (!deletedNote) {
+      const error = new Error("Note not found")
+      error.status = 404
+      return next(error)
+    }
+
+    res.status(204).send()
+  } catch (err) {
+    next(err)
   }
-
-  res.status(204).send()
-
 }
 
 

@@ -12,7 +12,11 @@ import NewNotePage from "./pages/NewNotePage";
 import NoteDetail from "./pages/NoteDetail";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage"
 import Layout from "./comonents/Layout";
+import RequireAuth from "./comonents/RequireAuth"
+
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -68,7 +72,7 @@ export default function App() {
     return <p>Loading.....</p>;
   }
 
-  if (loading) {
+  if (error) {
     return <p>{error}</p>;
   }
 
@@ -76,7 +80,9 @@ export default function App() {
   <Routes>
     <Route path="/" element={<Layout />}>
       <Route index element={<HomePage notes={notes} onLike={handleLike} onDelete={handleDelete}  />} />
-      <Route path="notes/new" element={<NewNotePage addNote={addNote} />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="notes/new" element={<RequireAuth><NewNotePage addNote={addNote}/></RequireAuth> } />
       <Route path="notes/:id" element={<NoteDetail notes={notes} />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="404" element={<NotFound />} />

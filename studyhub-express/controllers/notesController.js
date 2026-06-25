@@ -18,9 +18,10 @@ const getNotes = async (req, res, next) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 20;
   const skip = (page - 1) * limit;
+  const filter = req.user ? {} : { isPublic: true };
 
   try {
-    const notes = await Note.find()
+    const notes = await Note.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -44,15 +45,15 @@ const getNotes = async (req, res, next) => {
 const getOneNote = async(req, res, next) => {
   try {
     const note = await Note.findById(req.params.id);
-    console.log(note.getContentSummary());
-    console.log(note.tagCount)
-
 
     if (!note) {
       const error = new Error("Note not found")
       error.status = 404
       return next(error)
     }
+
+    if (!note.isPublic && !req.user)
+      return res.status(401).json({ error: { message: "Not authenticated" } });
 
     res.json({
       data: note

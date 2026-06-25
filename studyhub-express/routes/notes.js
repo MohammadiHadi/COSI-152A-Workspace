@@ -10,11 +10,12 @@ getOneNote,
 
 const {createNoteRules, noteIdRules, updateNoteRules} = require("../validators/notesValidtors")
 const {validate} = require("../middleware/validate")
+const {protect, optionalAuth} = require("../middleware/auth")
 
-router.get('/',  getNotes);
-router.get('/:id', noteIdRules, validate,  getOneNote);
-router.post('/', createNoteRules, validate, createNote);
-router.patch('/:id', noteIdRules, updateNoteRules, validate, updateNote)
-router.delete('/:id', noteIdRules, validate, deleteNote)
+router.get('/', optionalAuth,  getNotes);
+router.get('/:id', optionalAuth, noteIdRules, validate,  getOneNote);
+router.post('/', protect, createNoteRules, validate, createNote);
+router.patch('/:id', protect, noteIdRules, updateNoteRules, validate, updateNote)
+router.delete('/:id', protect, noteIdRules, validate, deleteNote)
 
 module.exports = router;

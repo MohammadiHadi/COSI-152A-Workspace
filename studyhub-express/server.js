@@ -1,6 +1,7 @@
 const express = require("express")
 const dotenv = require("dotenv")
 const notesRouter = require("./routes/notes")
+const authRouter = require("./routes/auth")
 const mongoose = require("mongoose")
 
 
@@ -11,6 +12,7 @@ dotenv.config()
 app.use(express.json())
 
 app.use('/api/notes', notesRouter);
+app.use('/api/auth', authRouter);
 
 app.use((err, req, res, next) => {
   const status = err.status || 500;

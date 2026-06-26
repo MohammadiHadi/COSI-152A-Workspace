@@ -8,7 +8,7 @@ deleteNote,
 getOneNote,
 } = require('../controllers/notesController');
 
-const {createNoteRules, noteIdRules, updateNoteRules} = require("../validators/notesValidtors")
+const {createNoteRules, noteIdRules, updateNoteRules} = require("../validators/notesValidators")
 const {validate} = require("../middleware/validate")
 const {protect, optionalAuth} = require("../middleware/auth")
 

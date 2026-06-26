@@ -10,11 +10,19 @@ function signToken(user) {
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        error: { message: "Email is already registered" },
+      });
+    }
+    
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, passwordHash });
     const token = signToken(user);
     res.status(201).json({ data: { token,
-      user: { _id: user._id, name: user.name, email: user.email } } });
+      user: { _id: user._id, name: user.name, email: user.email, role: user.role } } });
   } catch (err) { next(err); }
 };
 
@@ -31,7 +39,7 @@ const login = async (req, res, next) => {
 
     const token = signToken(user);
     res.json({ data: { token,
-      user: { _id: user._id, name: user.name, email: user.email } } });
+      user: { _id: user._id, name: user.name, email: user.email, role: user.role } } });
   } catch (err) { next(err); }
 };
 

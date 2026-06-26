@@ -1,61 +1,122 @@
-@baseUrl=http://localhost:3000/api
+@baseUrl = http://localhost:3000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2VkMDY3YTc3YWIxNzc3YTllZmJhNSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzgyNTAxNTI2LCJleHAiOjE3ODMxMDYzMjZ9.vOkDRawj3lXqA8Z665fUXIhiFI8x7u7wBvL4rf_hKps
+@noteId = paste_note_id_here
 
-### Get all notes
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Student",
+  "email": "student@example.com",
+  "password": "password123"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "student@example.com",
+  "password": "password123"
+}
+
+### Get all public notes
 GET {{baseUrl}}/notes
 
-### Get one note
-GET {{baseUrl}}/notes/6a398e394159158589ea2195
+### Get all notes as logged-in user
+GET {{baseUrl}}/notes
+Authorization: Bearer {{token}}
 
-
-### Create a note
+### Create a valid note
 POST {{baseUrl}}/notes
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "Testing API using REST Client",
-    "content": "REST Client is a VS code extension that helps us manually test an API",
-    "course": "152A"
+  "title": "React State",
+  "course": "COSI 152A",
+  "content": "React state helps components remember and update data.",
+  "tags": ["react", "state"]
 }
 
-### Create a note with empty/space-only course content
+### Create validation test: missing title
 POST {{baseUrl}}/notes
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "Testing API using REST Client",
-    "content": "REST Client is a VS code extension that helps us manually test an API",
-    "course": "    "
+  "course": "COSI 152A",
+  "content": "This request should fail because title is missing.",
+  "tags": ["validation"]
 }
 
-### Create a note with beyond max length title
+### Create validation test: missing content
 POST {{baseUrl}}/notes
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "Testing API using REST Client",
-    "content": "REST Client is a VS code extension that helps us manually test an API",
-    "course": "152A"
+  "title": "Missing Content Test",
+  "course": "COSI 152A",
+  "tags": ["validation"]
 }
 
+### Create validation test: tags must be an array
+POST {{baseUrl}}/notes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Invalid Tags Test",
+  "course": "COSI 152A",
+  "content": "This should fail because tags is not an array.",
+  "tags": "react"
+}
+
+### Get one note by ID
+GET {{baseUrl}}/notes/{{noteId}}
+
+### Get one note by ID as logged-in user
+GET {{baseUrl}}/notes/{{noteId}}
+Authorization: Bearer {{token}}
+
+### Invalid ID test
+GET {{baseUrl}}/notes/123
 
 ### Update a note
-PATCH {{baseUrl}}/notes/6a398f81756b88a117e1823c
+PATCH {{baseUrl}}/notes/{{noteId}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "This title is updated"
+  "title": "Updated React State",
+  "course": "COSI 152A",
+  "content": "This note has been updated.",
+  "tags": ["react", "state", "updated"]
 }
 
-### Update a note
-PUT {{baseUrl}}/notes/3
+### Update only likes
+PATCH {{baseUrl}}/notes/{{noteId}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "This title is updated"
+  "likes": 1
 }
 
+### Update validation test: empty title
+PATCH {{baseUrl}}/notes/{{noteId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": ""
+}
 
 ### Delete a note
-DELETE {{baseUrl}}/notes/6a398e394159158589ea2196
+DELETE {{baseUrl}}/notes/{{noteId}}
+Authorization: Bearer {{token}}
 
-
+### Delete without token should fail
+DELETE {{baseUrl}}/notes/{{noteId}}

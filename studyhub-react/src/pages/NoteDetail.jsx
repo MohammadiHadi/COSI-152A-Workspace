@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getNote } from "../services/notesService";
 
-export default function NoteDetail({ notes }) {
+export default function NoteDetail() {
   const { id } = useParams();
   const [note, setNote]     = useState(null);
   const [status, setStatus] = useState("loading");
@@ -22,6 +22,9 @@ export default function NoteDetail({ notes }) {
       <h2>{note.title}</h2>
       <p>
         <strong>Course:</strong> {note.course}
+      </p>
+      <p>
+        <strong>Content:</strong> {note.content}
       </p>
       <p>♥ {note.likes} likes</p>
 

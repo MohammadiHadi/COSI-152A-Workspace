@@ -15,11 +15,28 @@ export default function LoginPage() {
   }
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Log in</h2>
       {error && <p role="alert">{error}</p>}
-      <input placeholder="Email" value={form.email} onChange={set("email")} />
-      <input type="password" placeholder="Password"
-             value={form.password} onChange={set("password")} />
-      <button>Log in</button>
+
+      <label>
+        Email
+        <input
+          type="email"
+          value={form.email}
+          onChange={set("email")}
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          type="password"
+          value={form.password}
+          onChange={set("password")}
+        />
+      </label>
+
+      <button type="submit">Log in</button>
     </form>
   );
 }

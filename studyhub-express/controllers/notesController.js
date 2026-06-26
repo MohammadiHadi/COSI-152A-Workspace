@@ -1,5 +1,9 @@
 const Note = require("../models/Note")
 
+function canModify(note, user) {
+  return note.author.equals(user.id) || user.role === "instructor";
+}
+
 const createNote = async(req, res, next) => {
   try {
     const note = await Note.create({
@@ -7,6 +11,7 @@ const createNote = async(req, res, next) => {
       content: req.body.content, 
       course: req.body.course, 
       tags: req.body.tags, 
+      author: req.user.id
     });
     res.status(201).json({ data: note });
   } catch(err){
@@ -25,10 +30,10 @@ const getNotes = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .select("title course createdAt author")
-      .populate("author", "name email");
+      .select("title course createdAt author likes content tags")
+      .populate("author", "name email role");
 
-    const total = await Note.countDocuments();
+    const total = await Note.countDocuments(filter);
 
     res.json({
       data: notes,
@@ -44,13 +49,9 @@ const getNotes = async (req, res, next) => {
 
 const getOneNote = async(req, res, next) => {
   try {
-    const note = await Note.findById(req.params.id);
+    const note = await Note.findById(req.params.id).populate("author", "name email role");;
 
-    if (!note) {
-      const error = new Error("Note not found")
-      error.status = 404
-      return next(error)
-    }
+    if (!note) return res.status(404).json({ error: { message: "Note not found" } });
 
     if (!note.isPublic && !req.user)
       return res.status(401).json({ error: { message: "Not authenticated" } });
@@ -63,45 +64,33 @@ const getOneNote = async(req, res, next) => {
   }
 };
 
-const updateNote = async(req, res , next) => {
+const updateNote = async (req, res, next) => {
   try {
-    const updatedNote = await Note.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      {
-        new: true,
-        runValidators: true
-      }
-    );
+    const note = await Note.findById(req.params.id);
+    if (!note) return res.status(404).json({ error: { message: "Not found" } });
+    if (!canModify(note, req.user)) return res.status(403).json({ error: { message: "Forbidden" } });
+    
+    const saved = await Note.findByIdAndUpdate( req.params.id, req.body, { new: true, runValidators: true });
+    
+    res.json({ data: saved });
+  } catch (err) { next(err); }
+};
 
-    if (!updatedNote) {
-      const error = new Error("Note not found")
-      error.status = 404
-      return next(error)
-    }
-
-    res.json({data: updatedNote})
-  } catch (err) {
-    next(err)
-  }
-}
-
-
-const deleteNote = async(req, res , next) => {
+const deleteNote = async (req, res, next) => {
   try {
-    const deletedNote = await Note.findByIdAndDelete(req.params.id);
+    const note = await Note.findById(req.params.id);
 
-    if (!deletedNote) {
-      const error = new Error("Note not found")
-      error.status = 404
-      return next(error)
-    }
+    if (!note) return res.status(404).json({ error: { message: "Not found" }});
+    if (!canModify(note, req.user)) return res.status(403).json({ error: { message: "Forbidden" } });
 
-    res.status(204).send()
+    await note.deleteOne();
+
+    res.status(204).send();
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
+
 
 
 module.exports = {

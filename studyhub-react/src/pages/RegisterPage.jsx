@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -15,12 +15,14 @@ export default function LoginPage() {
   }
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Register Account</h2>
       {error && <p role="alert">{error}</p>}
-      <input placeholder="Name" value={form.name} onChange={set("name")} />
-      <input placeholder="Email" value={form.email} onChange={set("email")} />
-      <input type="password" placeholder="Password"
-             value={form.password} onChange={set("password")} />
-      <button>Log in</button>
+      <label>Name <input placeholder="Name" value={form.name} onChange={set("name")} /></label>
+      <label>Email <input placeholder="Email" value={form.email} onChange={set("email")} /></label>
+      <label>Password <input type="password" placeholder="Password"
+             value={form.password} onChange={set("password")} /></label>
+      <button>Register</button>
     </form>
+
   );
 }

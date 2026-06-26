@@ -4,11 +4,11 @@ const notesRouter = require("./routes/notes")
 const authRouter = require("./routes/auth")
 const mongoose = require("mongoose")
 
+dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
-dotenv.config()
 app.use(express.json())
 
 app.use('/api/notes', notesRouter);
@@ -35,20 +35,5 @@ mongoose.connect(process.env.MONGODB_URI).then(()=>{
 }).catch((err)=>{
   console.log("Failed to connect to MongoDB", err)
 })
-
-// async function startServer() { 
-//   try {
-//     await mongoose.connect(process.env.MONGODB_URI); 
-//     console.log("Connected to MongoDB!")
-//     app.listen(PORT, () => {
-//       console.log(`Server is running on http://localhost:${PORT}`);
-//     });  
-//   } catch (err) {
-//     console.error("Failed to connect to MongoDB:", err);
-//     process.exit(1);
-//   }
-// }
-
-// startServer()
 
 

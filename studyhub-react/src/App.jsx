@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import {
   getNotes,
   createNote,
-  updateNote,
   deleteNote,
+  likeNote,
 } from "./services/notesService";
 
 
@@ -16,9 +16,9 @@ import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage"
+import EditNotePage from "./pages/EditNotePage";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth"
-
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -29,19 +29,13 @@ export default function App() {
 
   async function handleLike(id) {
     try {
-      const note = notes.find(n => n._id === id);
-
-      if (!note) return;
-
-      const updated = await updateNote(id, {
-        likes: (note.likes || 0) + 1,
-      });
+      const updated = await likeNote(id);
 
       setNotes(prev =>
-        prev.map(n => (n._id === id ? updated : n))
+        prev.map(note => (note._id === id ? updated : note))
       );
-    } catch(err) {
-      setError(`Could not update likes: ${err.message} `);
+    } catch (err) {
+      setError(`Could not like the note: ${err.message}`);
     }
   }
 
@@ -98,6 +92,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="notes/new" element={<RequireAuth><NewNotePage addNote={addNote}/></RequireAuth> } />
+      <Route path="notes/:id/edit" element={<RequireAuth><EditNotePage /></RequireAuth>}/>
       <Route path="notes/:id" element={<NoteDetail  />} />
       <Route path="about" element={<AboutPage />} />
       <Route path="404" element={<NotFound />} />

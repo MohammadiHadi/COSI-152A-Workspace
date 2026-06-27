@@ -47,6 +47,12 @@ export default function NoteCard({ note, onLike,onDelete, activeTag, onTagClick 
           Delete
         </button>
       )}
+      
+      {canEdit && (
+        <Link to={`/notes/${note._id}/edit`}>
+          Edit
+        </Link>
+      )}
     </article>
   );
 }

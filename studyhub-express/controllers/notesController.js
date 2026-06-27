@@ -70,10 +70,34 @@ const updateNote = async (req, res, next) => {
     if (!note) return res.status(404).json({ error: { message: "Not found" } });
     if (!canModify(note, req.user)) return res.status(403).json({ error: { message: "Forbidden" } });
     
-    const saved = await Note.findByIdAndUpdate( req.params.id, req.body, { new: true, runValidators: true });
-    
+    const saved = await Note.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    ).populate("author", "name email role");
+
     res.json({ data: saved });
   } catch (err) { next(err); }
+};
+
+const likeNote = async (req, res, next) => {
+  try {
+    const note = await Note.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { likes: 1 } },
+      { new: true, runValidators: true }
+    ).populate("author", "name email role");
+
+    if (!note) {
+      return res.status(404).json({
+        error: { message: "Note not found" },
+      });
+    }
+
+    res.json({ data: note });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const deleteNote = async (req, res, next) => {
@@ -99,6 +123,7 @@ createNote,
 updateNote,
 deleteNote,
 getOneNote,
+likeNote,
 }
 
 

@@ -6,6 +6,9 @@ export const getNote    = (id)        => request(`/notes/${id}`).then(r => r.dat
 export const createNote = (data) =>
   request("/notes", { method: "POST", body: JSON.stringify(data) }).then(r => r.data);
 
+export const likeNote = id =>
+  request(`/notes/${id}/like`, { method: "PATCH" }).then(r => r.data);
+
 export const updateNote = (id, patch) =>
   request(`/notes/${id}`, { method: "PATCH", body: JSON.stringify(patch) }).then(r => r.data);
 

@@ -3,12 +3,14 @@ const dotenv = require("dotenv")
 const notesRouter = require("./routes/notes")
 const authRouter = require("./routes/auth")
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
+app.use(corse({origin: process.env.CLIENT_URL || "http://localhost:5173", credentials: true}))
 app.use(express.json())
 
 app.use('/api/notes', notesRouter);

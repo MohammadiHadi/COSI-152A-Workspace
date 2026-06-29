@@ -1,4 +1,5 @@
-const BASE_URL = "/api";        // Vite proxy forwards /api -> :3000
+const API_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = `${API_URL}/api`;        // Vite proxy forwards /api -> :3000
 
 export async function request(path, options = {}) {
   const token = localStorage.getItem("token");           // NEW
